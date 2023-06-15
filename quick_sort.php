@@ -1,40 +1,48 @@
 <?php
 
-function quickSort(int $start, int $end, array &$arr) {
-    if ($end <= $start || count($arr) < 2) {
-        return;
-    }
+function partition(&$array, $left, $right) {
+    $pivotIndex = floor($left + ($right - $left) / 2);
+    $pivotValue = $array[$pivotIndex];
 
-    $pivot = $arr[(int)(($start + $end) / 2)];
+    $i = $left;
+    $j = $right;
 
-    [$left, $right] = [$start, $end];
-
-    while (true) {
-        while ($arr[$left] < $pivot) {
-            $left++;
+    while ($i <= $j) {
+        while ($array[$i] < $pivotValue) {
+            $i++;
         }
 
-        while ($arr[$right] > $pivot) {
-            $right--;
+        while ($array[$j] > $pivotValue) {
+            $j--;
         }
 
-        if ($right <= $left) {
-            break;
+        if ($i <= $j) {
+            [$array[$i], $array[$j]] = [$array[$j], $array[$i]];
+            $i++;
+            $j--;
         }
-        [$arr[$left], $arr[$right]] = [$arr[$right], $arr[$left]];
-        $left++;
-        $right--;
     }
+    return $i;
+}
 
-    if ($start < $left - 1) {
-        quickSort($start, $left - 1, $arr);
-    }
-    if ($right + 1 < $end) {
-        quickSort($right + 1, $end, $arr);
+function quicksort(&$array, $left, $right) {
+    if ($left < $right) {
+        $pivotIndex = partition($array, $left, $right);
+        quicksort($array, $left,$pivotIndex - 1);
+        quicksort($array, $pivotIndex, $right);
     }
 }
 
-$a = range(0, 100);
-shuffle($a);
-quickSort(0, count($a) - 1, $a);
-print_r($a);
+for ($i = 0; $i < 10; $i++) {
+    $array[] = rand(0, 200);
+}
+
+echo "First run \r\n";
+foreach($array as $value) {
+    echo $value . "\r\n";
+}
+echo "\r\n\r\n";
+quicksort($array, 0,count($array) - 1);
+foreach($array as $value) {
+    echo $value . "\r\n";
+}
